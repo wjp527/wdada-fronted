@@ -1,0 +1,61 @@
+{
+  // "files": [],
+  // "references": [
+  //   {
+  //     "path": "./tsconfig.app.json"
+  //   },
+  //   {
+  //     "path": "./tsconfig.node.json"
+  //   }
+  // ],
+  "compilerOptions": {
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "types": [
+      "vite/client"
+    ]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "env.d.ts"
+  ]
+}
+// 导入 component: () => import('@/views/Home/index.vue'), 不报错
+// {
+//   "files": [],
+//   "references": [
+//     {
+//       "path": "./tsconfig.node.json"
+//     },
+//     {
+//       "path": "./tsconfig.app.json"
+//     }
+//   ],
+//   "compilerOptions": {
+//     "target": "ES2015",
+//     "module": "ESNext",
+//     "lib": [
+//       "ES2015",
+//       "DOM",
+//       "DOM.Iterable"
+//     ],
+//     "moduleResolution": "node",
+//     "esModuleInterop": true,
+//     "baseUrl": ".",
+//     "paths": {
+//       "@/*": [
+//         "./src/*"
+//       ]
+//     }
+//   },
+//   "ts-node": {
+//     "esm": true,
+//     "experimentalSpecifierResolution": "node"
+//   }
+// }
