@@ -9,7 +9,7 @@ router.beforeEach(async (to, from, next) => {
   let loginUser = loginUserStore.loginUser
 
   // 如果之前没有尝试获取过登录信息，才自动获取
-  if (!loginUser || !loginUser.useRole) {
+  if (!loginUser || !loginUser.userRole) {
     // 加 await 是为了等待用户登录成功并获取到值时，在执行后续操作
     await loginUserStore.fetchLoginUserAsync()
     loginUser = loginUserStore.loginUser
@@ -21,9 +21,10 @@ router.beforeEach(async (to, from, next) => {
   if (needAccess !== ACCESS_ENUM.NOT_LOGIN) {
     if (
       !loginUser ||
-      !loginUser.useRole ||
+      !loginUser.userRole ||
       loginUser.userRole === ACCESS_ENUM.NOT_LOGIN) {
       next(`/user/login?redirect=${to.fullPath}`)
+      return
     }
 
     // 如果已经登陆了，判断权限是否足够，如果不是，跳转到无权限的页面

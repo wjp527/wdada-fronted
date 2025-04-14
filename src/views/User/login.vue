@@ -1,7 +1,7 @@
 <template>
   <div id="user-login">
     <h2 style="margin-bottom: 16px">用户登录</h2>
-    <a-form style="max-width: 480px; margin: 0 auto" label-align="left" auto-label-width :model="form" @submit="handleSubmit">
+    <a-form style="max-width: 480px; margin: 0 auto" label-align="left" auto-label-width :model="form"  >
       <a-form-item field="userAccount" label="账号">
         <a-input v-model="form.userAccount" placeholder="请输入账号" />
       </a-form-item>

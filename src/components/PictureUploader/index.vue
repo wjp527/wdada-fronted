@@ -48,6 +48,8 @@ interface Props {
   value?: string
 }
 
+const emit = defineEmits(['update:modelValue'])
+
 /**
  * 给组件指定初始值
  */
@@ -78,6 +80,8 @@ const customRequest = async (option: any) => {
     }
     props.onChange?.(url)
     onSuccess()
+    // 给父组件传值
+    emit('update:modelValue', url)
     console.log(file.value)
   } else {
     Message.error('上传失败，' + res.data.message || '')

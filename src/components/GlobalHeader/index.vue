@@ -14,7 +14,7 @@
       </a-col>
       <a-col flex="100px">
         <div>
-          <a-button type="primary" href="/user/login" v-if="!loginUser.id">登录</a-button>
+          <a-button type="primary" @click="handleLogin" v-if="!loginUser.id">登录</a-button>
 
           <a-dropdown v-else :popup-max-height="false">
             <a-button>{{ loginUser.userName || defineName }}<icon-down /></a-button>
@@ -75,6 +75,10 @@ const handleTo = (item: any) => {
   router.push(item.path)
 }
 
+// 登录
+const handleLogin = () => {
+  router.replace('/user/login')
+}
 // 退出登录
 const handleLogout = () => {
   // 退出登录操作

@@ -50,9 +50,9 @@ export const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path: '/admin',
-    name: '管理页面',
-    component: () => import('@/views/Home/index.vue'),
+    path: "/admin/user",
+    name: '用户管理',
+    component: () => import('@/views/Admin/AdminUser.vue'),
     meta: {
       access: ACCESS_ENUM.ADMIN
     }
