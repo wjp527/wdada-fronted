@@ -3,7 +3,7 @@
     <a-row class="grid-demo" align="center" :wrap="false">
       <a-col flex="auto">
         <a-menu mode="horizontal" :selected-keys="selectedKey" :default-selected-keys="['1']">
-          <a-menu-item key="0" :style="{ padding: 0, marginRight: '38px' }">
+          <a-menu-item key="0" :style="{ padding: 0, marginRight: '38px' }" @click="handleHome">
             <div class="titlebar flex items-center justify-center">
               <img src="@/assets/logo.png" alt="" style="width: 48px; height: 48px" />
               <div class="text-sm text-black-300 dark:text-black-400">wAI答题</div>
@@ -70,8 +70,13 @@ router.afterEach(to => {
   selectedKey.value = [to.path]
 })
 
+// 跳转首页
+const handleHome = () => {
+  router.push('/')
+}
 // 导航栏之间的跳转
 const handleTo = (item: any) => {
+  console.log(123)
   router.push(item.path)
 }
 

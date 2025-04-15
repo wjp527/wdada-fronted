@@ -59,7 +59,7 @@
         <a-tag>{{ REVIEW_STATUS_MAP[record.reviewStatus] }}</a-tag>
       </template>
       <template #appIcon="{ record }">
-        <a-avatar v-if="record.appIcon.startsWith('http' || 'https')">
+        <a-avatar v-if="record?.appIcon?.startsWith('https://')">
           <img alt="avatar" :src="record.appIcon" />
         </a-avatar>
         <a-avatar v-else>
@@ -67,7 +67,7 @@
         </a-avatar>
       </template>
       <template #userAvatar="{ record }">
-        <a-avatar v-if="record.userAvatar != null">
+        <a-avatar v-if="record?.userAvatar?.startsWith('https://')">
           <img alt="avatar" :src="record.userAvatar" />
         </a-avatar>
         <a-avatar v-else>
@@ -108,6 +108,12 @@
     <AdminAppModal v-if="ModalType !== null" :title="ModalType === 'add' ? '添加应用' : '编辑应用'" :form="editAppInfo" v-model="visible" @ok="handleOk" @cancel="handleCancel" />
     <!-- 审核人/创建人弹窗 -->
     <ReviewOrUserModal v-if="ReviewerOrUserModalType !== null" :title="ReviewerOrUserModalType === 'reviewerId' ? '审核人信息' : '创建人信息'" :form="reviewerOrUserInfo" v-model="visible" />
+
+    <!-- 审核APP -->
+    <!-- <a-drawer :width="340" :visible="reviewVisible" @ok="handleOk" @cancel="handleCancel" unmountOnClose>
+      <template #title> Title </template>
+      <div>You can customize modal body text by the current situation. This modal will be closed immediately once you press the OK button.</div>
+    </a-drawer> -->
   </div>
 </template>
 
@@ -127,6 +133,7 @@ import { addAppUsingPost, deleteAppUsingPost, listAppByPageUsingPost, updateAppU
 import { APP_TYPE_ENUM, APP_TYPE_MAP, REVIEW_STATUS_MAP, SCORE_STRATEGY_ENUM, SCORE_STRATEGY_MAP } from '@/constant/app'
 // 引入图标
 import { IconEye, IconRecord } from '@arco-design/web-vue/es/icon'
+import { useLoginUserStore } from '@/store/user'
 // 搜索条件
 const searchParams = ref<API.UserQueryRequest>({
   userName: '',
@@ -139,7 +146,7 @@ const searchParams = ref<API.UserQueryRequest>({
 const dataList = ref<API.User[]>()
 // 总条数
 const total = ref<number>(0)
-  const pagination = computed(() => ({
+const pagination = computed(() => ({
   total: total.value,
   current: searchParams.value.current,
   pageSize: searchParams.value.pageSize,
@@ -243,8 +250,11 @@ const handleAdd = () => {
   ReviewerOrUserModalType.value = null
 }
 
+// 编辑用户
+const useLoginUser = useLoginUserStore()
 const handleEdit = (record: API.App) => {
   editAppInfo.value = JSON.parse(JSON.stringify(record))
+  editAppInfo.value.reviewStatus = editAppInfo.value.reviewStatus == 1 ? true : false
   visible.value = true
   ModalType.value = 'edit'
   ReviewerOrUserModalType.value = null
@@ -266,9 +276,14 @@ const handleOk = async () => {
   visible.value = false
   // 处理确认逻辑
   let res = null
+  editAppInfo.value.reviewStatus = editAppInfo.value.reviewStatus ? 1 : 0
   if (ModalType.value === 'add') {
     res = await addAppUsingPost(editAppInfo.value)
   } else if (ModalType.value === 'edit') {
+    editAppInfo.value.reviewerId = useLoginUser.loginUser.id
+    editAppInfo.value.reviewTime = new Date().getTime().toString()
+    editAppInfo.value.reviewMessage = editAppInfo.value.reviewMessage ?? ''
+
     res = await updateAppUsingPost(editAppInfo.value)
   }
   if (res.data.code === 0) {
@@ -313,6 +328,12 @@ const handleUserId = async (record: API.App) => {
     ReviewerOrUserModalType.value = 'userId'
     ModalType.value = null
   }
+}
+
+// 审核APP
+const reviewVisible = ref(false)
+const handleReview = (record: API.App) => {
+  reviewVisible.value = true
 }
 
 // 页码改变

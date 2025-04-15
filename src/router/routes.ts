@@ -8,10 +8,82 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/home',
-    name: '首页',
+    name: '主页',
     component: () => import('@/views/Home/index.vue'),
-    meta: { title: '首页' }
+    meta: { title: '主页' }
   },
+  {
+    path: `/app/detail/:id`,
+    // 确保可以获取到 id
+    props: true,
+    name: '应用详情',
+    component: () => import('@/views/App/AppDetail.vue'),
+    meta: {
+      title: '应用详情',
+      hideInMenu: true
+    }
+  },
+  {
+    path: "/add/app",
+    name: "创建应用",
+    component: () => import('@/views/Add/AddApp.vue')
+  },
+  {
+    path: "/add/app/:id",
+    name: "修改应用",
+    component: () => import('@/views/Add/AddApp.vue'),
+    props: true,
+    meta: {
+      hideInMenu: true,
+    },
+  },
+  {
+    path: "/add/question/:appId",
+    name: "创建题目",
+    component: () => import('@/views/Add/AddQuestion.vue'),
+    props: true,
+    meta: {
+      hideInMenu: true,
+    },
+  },
+  {
+    path: "/add/scoring_result/:appId",
+    name: "创建评分",
+    component: () => import('@/views/Add/AddScoringResult.vue'),
+    props: true,
+    meta: {
+      hideInMenu: true,
+    },
+  },
+  {
+    path: "/answer/do/:appId",
+    name: "答题",
+    component: () => import('@/views/Answer/DoAnswer.vue'),
+    props: true,
+    meta: {
+      hideInMenu: true,
+      access: ACCESS_ENUM.USER,
+    },
+  },
+  {
+    path: "/answer/result/:id",
+    name: "答题结果",
+    component: () => import('@/views/Answer/AnswerResult.vue'),
+    props: true,
+    meta: {
+      hideInMenu: true,
+      access: ACCESS_ENUM.USER,
+    },
+  },
+  {
+    path: "/answer/my",
+    name: "我的答题",
+    component: () => import('@/views/Answer/MyAnswer.vue'),
+    meta: {
+      access: ACCESS_ENUM.USER,
+    },
+  },
+
   {
     path: '/me',
     name: 'Me',

@@ -33,10 +33,13 @@
   }
 
   .content {
-    width: 100vw;
+    max-width: 1400px;
+    width: 100%;
     background: linear-gradient(to right, #fefefe, #fff);
+    margin: 0 auto;
     margin-bottom: 28px;
-    padding: 20px;
+    padding: 20px; 
+    box-sizing: border-box;
   }
 
   .footer {
@@ -44,5 +47,9 @@
     padding: 16px;
     text-align: center;
   }
+}
+
+::v-deep .arco-list-content {
+  margin: 0 !important;
 }
 </style>

@@ -23,15 +23,18 @@ importers:
       axios:
         specifier: ^1.8.4
         version: 1.8.4
-      dayjs:
-        specifier: ^1.11.13
-        version: 1.11.13
       less:
         specifier: ^4.3.0
         version: 4.3.0
       less-loader:
         specifier: ^12.2.0
         version: 12.2.0(less@4.3.0)
+      lodash-es:
+        specifier: 4.x
+        version: 4.17.21
+      nanoid:
+        specifier: 4.x
+        version: 4.0.2
       pinia:
         specifier: ^3.0.2
         version: 3.0.2(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3))
@@ -1525,6 +1528,11 @@ packages:
   nanoid@3.3.11:
     resolution: {integrity: sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
+    hasBin: true
+
+  nanoid@4.0.2:
+    resolution: {integrity: sha512-7ZtY5KTCNheRGfEFxnedV5zFiORN1+Y1N6zvPTnHQd8ENUvfaDBeuJDZb2bN/oXwXxu3qkTXDzy57W5vAmDTBw==}
+    engines: {node: ^14 || ^16 || >=18}
     hasBin: true
 
   needle@3.3.1:
@@ -3665,6 +3673,8 @@ snapshots:
   muggle-string@0.4.1: {}
 
   nanoid@3.3.11: {}
+
+  nanoid@4.0.2: {}
 
   needle@3.3.1:
     dependencies:

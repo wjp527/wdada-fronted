@@ -27,6 +27,7 @@ router.beforeEach(async (to, from, next) => {
       return
     }
 
+    console.log(!checkAccess(loginUser, needAccess), '-=--');
     // 如果已经登陆了，判断权限是否足够，如果不是，跳转到无权限的页面
     if (!checkAccess(loginUser, needAccess)) {
       next('/noAuth')

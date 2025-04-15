@@ -12,7 +12,7 @@
             <a-select :style="{ width: '320px' }" v-model="searchParams.userRole" placeholder="请选择用户角色" allow-clear>
               <a-option value="admin">管理员</a-option>
               <a-option value="user">用户</a-option>
-              <a-option value="ban">禁用</a-option>
+              <a-option value="ban">被封号</a-option>
             </a-select>
           </a-form-item>
         </a-col>
@@ -49,11 +49,7 @@
     <a-table :columns="columns" :data="dataList" :pagination="pagination" @page-change="onPageChange" @page-size-change="onPageSizeChange">
       <template #questionContent="{ record }">
         <a-button type="primary" size="small" @click="showQuestionDetail(record)"> 查看题目 </a-button>
-        <ShowQuestion 
-    :record="currentQuestion" 
-    :visible="modalVisible"
-    @update:visible="handleVisibleChange"
-  />
+        <ShowQuestion :record="currentQuestion" :visible="modalVisible" @update:visible="handleVisibleChange" />
       </template>
       <template #userId="{ record }">
         <a-popover title="用户信息" trigger="click" @popup-visible-change="handleUserId(record)">
@@ -305,18 +301,18 @@ const onPageSizeChange = (size: number) => {
   // 重新加载数据
   loadData()
 }
- 
+
 const currentQuestion = ref<API.Question>()
 
 const modalVisible = ref(false) // 父组件状态
 
 // 监听子组件的 visible 变化
-const handleVisibleChange = (newVisible) => {
+const handleVisibleChange = newVisible => {
   modalVisible.value = newVisible
 }
 const showQuestionDetail = (record: API.Question) => {
   modalVisible.value = true
-  console.log( modalVisible.value ,' modalVisible.value ');
+  console.log(modalVisible.value, ' modalVisible.value ')
   currentQuestion.value = record
 }
 </script>

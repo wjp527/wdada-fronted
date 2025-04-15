@@ -17,6 +17,8 @@
     "axios": "^1.8.4",
     "less": "^4.3.0",
     "less-loader": "^12.2.0",
+    "lodash-es": "4.x",
+    "nanoid": "4.x",
     "pinia": "^3.0.2",
     "pinia-plugin-persistedstate": "^4.2.0",
     "tailwindcss": "^4.1.3",
