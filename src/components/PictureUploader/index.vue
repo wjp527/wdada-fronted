@@ -48,6 +48,7 @@ interface Props {
   value?: string
 }
 
+// 定义自定义事件
 const emit = defineEmits(['update:modelValue'])
 
 /**

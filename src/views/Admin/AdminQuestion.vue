@@ -1,5 +1,5 @@
 <template>
-  <div class="admin-user">
+  <div class="admin-question">
     <a-form :model="searchParams" @submit="loadData">
       <a-row :gutter="16">
         <a-col :span="8">
@@ -26,7 +26,7 @@
                 <template #icon>
                   <icon-user-add />
                 </template>
-                添加用户
+                添加题目
               </a-button>
               <a-button html-type="submit" type="primary">
                 <template #icon>
@@ -47,18 +47,35 @@
     </a-form>
 
     <a-table :columns="columns" :data="dataList" :pagination="pagination" @page-change="onPageChange" @page-size-change="onPageSizeChange">
-      <template #userRole="{ record }">
-        <a-tag v-if="record.userRole === 'admin'" color="green">管理员</a-tag>
-        <a-tag v-else-if="record.userRole === 'user'" color="blue">用户</a-tag>
-        <a-tag v-else color="red">禁用</a-tag>
+      <template #questionContent="{ record }">
+        <a-button type="primary" size="small" @click="showQuestionDetail(record)"> 查看题目 </a-button>
+        <ShowQuestion 
+    :record="currentQuestion" 
+    :visible="modalVisible"
+    @update:visible="handleVisibleChange"
+  />
       </template>
-      <template #userAvatar="{ record }">
-        <a-avatar v-if="record.userAvatar != null">
-          <img alt="avatar" :src="record.userAvatar" />
-        </a-avatar>
-        <a-avatar v-else>
-          <img alt="avatar" src="@/assets/logo.png" />
-        </a-avatar>
+      <template #userId="{ record }">
+        <a-popover title="用户信息" trigger="click" @popup-visible-change="handleUserId(record)">
+          <a-button>{{ record.userId }}</a-button>
+          <template #content>
+            <div>
+              <p>用户名: {{ userInfo?.userName }}</p>
+              <p>用户介绍: {{ userInfo?.userProfile }}</p>
+            </div>
+          </template>
+        </a-popover>
+      </template>
+      <template #appId="{ record }">
+        <a-popover title="应用信息" trigger="click" @popup-visible-change="handleAppId(record)">
+          <a-button>{{ record.appId }}</a-button>
+          <template #content>
+            <div>
+              <p>应用名: {{ appInfo?.appName }}</p>
+              <p>应用介绍: {{ appInfo?.appDesc }}</p>
+            </div>
+          </template>
+        </a-popover>
       </template>
       <template #createTime="{ record }">
         {{ dayjs(record.createTime).format('YYYY-MM-DD HH:mm:ss') }}
@@ -73,19 +90,25 @@
           <a-button type="text">删除</a-button>
         </a-popconfirm>
       </template>
-    </a-table> 
+    </a-table>
 
-    <User-Modal :title="userModalType === 'add' ? '添加用户' : '编辑用户'" :form="editUserInfo" v-model="visible" @ok="handleOk" @cancel="handleCancel" />
+    <QuestionModal :title="userModalType === 'add' ? '添加题目' : '编辑题目'" :form="editQuestionInfo" v-model="visible" @ok="handleOk" @cancel="handleCancel" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { addUserUsingPost, deleteUserUsingPost, listUserVoByPageUsingPost, updateUserUsingPost } from '@/api/userController'
+import { addUserUsingPost, deleteUserUsingPost, getUserByIdUsingGet, listUserVoByPageUsingPost, updateUserUsingPost } from '@/api/userController'
 import { Message } from '@arco-design/web-vue'
 import { computed, ref } from 'vue'
 import { IconUserAdd, IconSearch, IconSync } from '@arco-design/web-vue/es/icon'
-import UserModal from '@/components/Modal/index.vue' // 局部导入
+
+import QuestionModal from '@/components/Modal/Question/index.vue' // 局部导入
 import dayjs from 'dayjs'
+import { addQuestionUsingPost, deleteQuestionUsingPost, listQuestionByPageUsingPost, updateQuestionUsingPost } from '@/api/questionController'
+// 引入图标
+import { IconRecord } from '@arco-design/web-vue/es/icon'
+import { getAppVoByIdUsingGet } from '@/api/appController'
+import ShowQuestion from '@/components/Modal/Question/ShowQuestion.vue'
 // 搜索条件
 const searchParams = ref<API.UserQueryRequest>({
   userName: '',
@@ -98,7 +121,7 @@ const searchParams = ref<API.UserQueryRequest>({
 const dataList = ref<API.User[]>()
 // 总条数
 const total = ref<number>(0)
-  const pagination = computed(() => ({
+const pagination = computed(() => ({
   total: total.value,
   current: searchParams.value.current,
   pageSize: searchParams.value.pageSize,
@@ -107,7 +130,7 @@ const total = ref<number>(0)
 }))
 // 加载数据
 const loadData = async () => {
-  const res = await listUserVoByPageUsingPost(searchParams.value)
+  const res = await listQuestionByPageUsingPost(searchParams.value)
   if (res.data.code === 0) {
     dataList.value = res.data.data.records
     total.value = res.data.data.total
@@ -120,24 +143,20 @@ loadData()
 
 const columns = [
   {
-    title: '用户Id',
+    title: '题目Id',
     dataIndex: 'id',
   },
   {
-    title: '用户名',
-    dataIndex: 'userName',
+    title: '题目内容',
+    slotName: 'questionContent',
   },
   {
-    title: '用户角色',
-    slotName: 'userRole',
+    title: '用户Id',
+    slotName: 'userId',
   },
   {
-    title: '用户头像',
-    slotName: 'userAvatar',
-  },
-  {
-    title: '用户介绍',
-    dataIndex: 'userProfile',
+    title: '应用Id',
+    slotName: 'appId',
   },
   {
     title: '创建时间',
@@ -166,22 +185,52 @@ const clearSearchParams = () => {
 
 const visible = ref(false) // 改为 const 声明
 const userModalType = ref('add')
-let editUserInfo = ref<API.User>()
+let editQuestionInfo = ref<API.QuestionAddRequest>({
+  appId: 0,
+  questionContent: [
+    {
+      options: [
+        {
+          key: '',
+          result: '',
+          score: 0,
+          value: '',
+        },
+      ],
+      title: '',
+    },
+  ],
+})
 // 添加用户
 const handleAdd = () => {
   visible.value = true
   userModalType.value = 'add'
-  editUserInfo.value = {}
+  editQuestionInfo.value = {
+    appId: 0,
+    questionContent: [
+      {
+        options: [
+          {
+            key: '',
+            result: '',
+            score: 0,
+            value: '',
+          },
+        ],
+        title: '',
+      },
+    ],
+  }
 }
 
-const handleEdit = (record: API.User) => {
-  editUserInfo.value = JSON.parse(JSON.stringify(record))
+const handleEdit = (record: API.Question) => {
+  editQuestionInfo.value = JSON.parse(JSON.stringify(record))
   visible.value = true
   userModalType.value = 'edit'
 }
 // 删除用户
-const handleDelete = async (record: API.User) => {
-  let res = await deleteUserUsingPost({
+const handleDelete = async (record: API.Question) => {
+  let res = await deleteQuestionUsingPost({
     id: record.id,
   })
   if (res.data.code === 0) {
@@ -192,14 +241,16 @@ const handleDelete = async (record: API.User) => {
   }
 }
 
+// 确认按钮【添加/修改 - 子组件传来】
+
 const handleOk = async () => {
   visible.value = false
   // 处理确认逻辑
   let res = null
   if (userModalType.value === 'add') {
-    res = await addUserUsingPost(editUserInfo.value)
+    res = await addQuestionUsingPost(editQuestionInfo.value)
   } else if (userModalType.value === 'edit') {
-    res = await updateUserUsingPost(editUserInfo.value)
+    res = await updateQuestionUsingPost(editQuestionInfo.value)
   }
   if (res.data.code === 0) {
     Message.success('操作成功')
@@ -209,9 +260,34 @@ const handleOk = async () => {
   }
 }
 
+// 取消按钮【添加/修改 - 子组件传来】
 const handleCancel = () => {
   visible.value = false
   // 处理取消逻辑
+}
+
+// =------------------------------
+
+// 获取用户信息
+const userInfo = ref<API.User>()
+const handleUserId = async (record: API.User) => {
+  const res = await getUserByIdUsingGet({
+    id: record.userId,
+  })
+  if (res.data.code === 0) {
+    userInfo.value = res.data.data
+  }
+}
+
+// 获取应用信息
+const appInfo = ref<API.App>()
+const handleAppId = async (record: API.User) => {
+  const res = await getAppVoByIdUsingGet({
+    id: record.appId,
+  })
+  if (res.data.code === 0) {
+    appInfo.value = res.data.data
+  }
 }
 
 // 页码改变
@@ -229,6 +305,18 @@ const onPageSizeChange = (size: number) => {
   // 重新加载数据
   loadData()
 }
-</script>
+ 
+const currentQuestion = ref<API.Question>()
 
-<style lang="less" scoped></style>
+const modalVisible = ref(false) // 父组件状态
+
+// 监听子组件的 visible 变化
+const handleVisibleChange = (newVisible) => {
+  modalVisible.value = newVisible
+}
+const showQuestionDetail = (record: API.Question) => {
+  modalVisible.value = true
+  console.log( modalVisible.value ,' modalVisible.value ');
+  currentQuestion.value = record
+}
+</script>
