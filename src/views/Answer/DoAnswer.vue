@@ -54,7 +54,7 @@ const questionOptions = computed(() => {
     ? currentQuestion.value.options.map(item => {
         return {
           label: `${item.key}. ${item.value}`,
-          value: item.key,
+          value: item.value.toString(),
         }
       })
     : []
@@ -110,6 +110,7 @@ watchEffect(() => {
 
 // 选中选项后，进行保存
 const doRadioChange = (value: string) => {
+  currentAnswer.value = value
   answerList.value[current.value - 1] = value
 }
 
