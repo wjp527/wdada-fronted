@@ -1,6 +1,7 @@
 <template>
   <div id="addAppPage" class="flex flex-col items-center justify-center">
     <a-card :style="{ width: '860px' }">
+      <pre>{{ app }}</pre>
       <h1 class="text-2xl font-bold">{{ app.appName }}</h1>
       <h2 class="text-lg">{{ app.appDesc }}</h2>
 
@@ -26,7 +27,7 @@ import API from '@/api'
 import message from '@arco-design/web-vue/es/message'
 import { useRouter } from 'vue-router'
 import { addAppUsingPost, editAppUsingPost, getAppVoByIdUsingGet } from '@/api/appController'
-import { SCORE_STRATEGY_MAP, APP_TYPE_MAP } from '@/constant/app'
+import { SCORE_STRATEGY_MAP, APP_TYPE_MAP, APP_TYPE_ENUM, SCORE_STRATEGY_ENUM } from '@/constant/app'
 import { addQuestionUsingPost, editQuestionUsingPost, listQuestionVoByPageUsingPost } from '@/api/questionController'
 import { addUserAnswerUsingPost } from '@/api/userAnswerController'
 interface Props {
@@ -38,6 +39,8 @@ const props = withDefaults(defineProps<Props>(), {
     return ''
   },
 })
+
+//
 
 const router = useRouter()
 const app = ref<API.AppVO>({})
@@ -54,16 +57,17 @@ const questionOptions = computed(() => {
     ? currentQuestion.value.options.map(item => {
         return {
           label: `${item.key}. ${item.value}`,
-          value: item.value.toString(),
+          value: item.key,
         }
       })
     : []
 })
 // 当前答案
 const currentAnswer = ref<string>('')
-// 回答列表
+// 回答列表【A、B、C】
 const answerList = ref<string[]>([])
-
+// 用户选中选项的值列表【xxx、xxxx】
+const answerValueList = ref<string[]>([])
 /**
  * 加载数据
  */
@@ -111,7 +115,10 @@ watchEffect(() => {
 // 选中选项后，进行保存
 const doRadioChange = (value: string) => {
   currentAnswer.value = value
+  // 保存答案列表
   answerList.value[current.value - 1] = value
+  // 保存答案值列表
+  answerValueList.value[current.value - 1] = questionOptions.value.find(item => item.value === value)?.label || ''
 }
 
 /**
@@ -126,10 +133,19 @@ const handleSubmit = async () => {
 
   let res: any = null
 
+  // app.appType === 0: 与答案做比较
+  // app.appType === 1: 将选项值与AI对评测
   // 提交答案
+  let resultAnswerList = ref([])
+  // 是 测试类 并且是 交给AI 来检测的场景
+  if (app.value.appType === APP_TYPE_ENUM.TEST && app.value.scoringStrategy === SCORE_STRATEGY_ENUM.AI) {
+    resultAnswerList.value = answerValueList.value
+  } else {
+    resultAnswerList.value = answerList.value
+  }
   res = await addUserAnswerUsingPost({
     appId: props.appId as any,
-    choices: answerList.value,
+    choices: resultAnswerList.value,
   })
 
   if (res.data.code === 0 && res.data.data) {
