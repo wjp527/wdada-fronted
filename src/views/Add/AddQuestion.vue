@@ -2,17 +2,23 @@
   <div id="addAppPage" class="flex flex-col items-center justify-center">
     <h2 class="text-2xl font-bold mb-8">创建应用</h2>
 
-    <a-form :model="questionContent" :style="{ width: '626px' }" label-align="left" auto-label-width @submit="handleSubmit">
+    <a-form :model="questionContent" :style="{ width: '920px' }" label-align="left" auto-label-width @submit="handleSubmit">
       <a-form-item label="应用 id" class="!flex !items-center justify-between">
         <div class="flex-1 flex items-center">
           <a-tag>2</a-tag>
         </div>
-        <a-button type="primary" size="small" class="ml-4" @click="addQuestion($event, questionContent.length)"> 底部添加题目 </a-button>
+        <a-space>
+          <a-button type="outline" size="small" class="ml-4" @click="addQuestion($event, questionContent.length)"> 底部添加题目 </a-button>
+          <a-button type="primary" size="small" class="ml-4" @click="addAiQuestion()"> AI生成题目 </a-button>
+        </a-space>
       </a-form-item>
 
       <a-form-item label="题目列表" :content-flex="false" :merge-props="false">
-        <a-space direction="vertical" fill v-for="(item, index) in questionContent" :key="index">
-          <a-collapse destroy-on-hide class="w-[560px]">
+        <div v-if="loading" class="w-full h-[400px] flex justify-center items-center">
+          <a-spin dot />
+        </div>
+        <a-space v-else direction="vertical" fill v-for="(item, index) in questionContent" :key="index">
+          <a-collapse destroy-on-hide class="w-[860px]">
             <a-collapse-item :header="item.title" key="1">
               <template #header>
                 <a-input v-model="item.title" placeholder="请输入题目" />
@@ -52,6 +58,9 @@
         <a-button type="primary" html-type="submit" style="width: 120px"> 提交 </a-button>
       </a-form-item>
     </a-form>
+
+    <!-- 智谱AI生成题目【抽屉】 -->
+    <ZhiPuAiGenerateQuestionDrawer :appId="props.appId" v-model:visible="visible" @submit="ZhiPuAiGenerateQuestion" />
   </div>
 </template>
 
@@ -62,7 +71,8 @@ import message from '@arco-design/web-vue/es/message'
 import { useRouter } from 'vue-router'
 import { addAppUsingPost, editAppUsingPost, getAppVoByIdUsingGet } from '@/api/appController'
 import { SCORE_STRATEGY_MAP, APP_TYPE_MAP } from '@/constant/app'
-import { addQuestionUsingPost, editQuestionUsingPost, listQuestionVoByPageUsingPost } from '@/api/questionController'
+import { addQuestionUsingPost, aiGenerateQuestionUsingPost, editQuestionUsingPost, listQuestionVoByPageUsingPost } from '@/api/questionController'
+import ZhiPuAiGenerateQuestionDrawer from './components/ZhiPuAiGenerateQuestionDrawer.vue'
 interface Props {
   appId: string
 }
@@ -123,6 +133,28 @@ const deleteQuestionOption = (e, question: API.QuestionContentDTO, index: number
   question.options.splice(index, 1)
 }
 
+// AI生成题目
+const visible = ref(false)
+
+const addAiQuestion = () => {
+  visible.value = true
+}
+const loading = ref(false)
+
+// 智谱AI生成题目成功后后执行
+
+const ZhiPuAiGenerateQuestion = async payload => {
+  loading.value = true
+  let res = await aiGenerateQuestionUsingPost(payload)
+  if (res.data.code === 0) {
+    questionContent.value = [...questionContent.value, ...res.data.data]
+    visible.value = false
+  } else {
+    message.error('生成题目失败，' + res.data.message)
+  }
+  loading.value = false
+}
+
 // ============================
 const form = ref({
   appDesc: '',
@@ -153,6 +185,12 @@ const loadData = async () => {
     if (oldQuestion.value) {
       questionContent.value = oldQuestion.value.questionContent ?? []
     }
+  } else if (res.data.data.records.length == 0) {
+    message.warning('请添加题目')
+    questionContent.value.splice(0, 0, {
+      title: '',
+      options: [],
+    })
   } else {
     message.error('获取数据失败，' + res.data.message)
   }
@@ -194,3 +232,8 @@ const handleSubmit = async () => {
   }
 }
 </script>
+<style lang="less" scoped>
+::v-deep.arco-input-wrapper {
+  width: 400px !important;
+}
+</style>

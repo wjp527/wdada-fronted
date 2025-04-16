@@ -9,6 +9,11 @@
   //   }
   // ],
   "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "NodeNext",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "paths": {
       "@/*": [
         "./src/*"
@@ -17,6 +22,10 @@
     "types": [
       "vite/client"
     ]
+  },
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
   },
   "include": [
     "src/**/*.ts",
@@ -54,8 +63,8 @@
 //       ]
 //     }
 //   },
-//   "ts-node": {
-//     "esm": true,
-//     "experimentalSpecifierResolution": "node"
-//   }
+// "ts-node": {
+//   "esm": true,
+//   "experimentalSpecifierResolution": "node"
+// }
 // }

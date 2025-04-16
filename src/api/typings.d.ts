@@ -101,6 +101,12 @@ declare namespace API {
     message?: string;
   };
 
+  type BaseResponseListQuestionContentDTO_ = {
+    code?: number;
+    data?: QuestionContentDTO[];
+    message?: string;
+  };
+
   type BaseResponseLoginUserVO_ = {
     code?: number;
     data?: LoginUserVO;
@@ -795,9 +801,16 @@ declare namespace API {
   type UserVO = {
     createTime?: string;
     id?: number;
+    updateTime?: string;
     userAvatar?: string;
     userName?: string;
     userProfile?: string;
     userRole?: string;
+  };
+
+  type ZhiPuAiGenerateQuestionRequest = {
+    appId?: number;
+    optionNumber?: number;
+    questionNumber?: number;
   };
 }

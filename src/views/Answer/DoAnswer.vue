@@ -10,10 +10,10 @@
       </div>
       <div class="mt-2">
         <a-space>
-          <a-button v-if="current > 1" @click="current--">上一题</a-button>
+          <a-button v-if="current > 1" :disabled="loading" @click="current--">上一题</a-button>
           <a-button v-if="current < questionContent.length" :disabled="!currentAnswer" type="primary" @click="current++" class="!mx-2">下一题</a-button>
 
-          <a-button v-if="current == questionContent.length" :disabled="!currentAnswer" type="primary" status="success" @click="handleSubmit">查看结果</a-button>
+          <a-button v-if="current == questionContent.length" :disabled="!currentAnswer" :loading="loading" type="primary" status="success" @click="handleSubmit">查看结果</a-button>
         </a-space>
       </div>
     </a-card>
@@ -116,10 +116,13 @@ const doRadioChange = (value: string) => {
 /**
  * 提交
  */
+const loading = ref(false)
 const handleSubmit = async () => {
+  loading.value = true
   if (!props.appId || !answerList.value) {
     return
   }
+
   let res: any = null
 
   // 提交答案
@@ -133,5 +136,7 @@ const handleSubmit = async () => {
   } else {
     message.error('提交答案失败，' + res.data.message)
   }
+
+  loading.value = false
 }
 </script>
