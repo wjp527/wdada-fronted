@@ -1,7 +1,6 @@
 <template>
   <div id="addAppPage" class="flex flex-col items-center justify-center">
     <a-card :style="{ width: '860px' }">
-      <pre>{{ app }}</pre>
       <h1 class="text-2xl font-bold">{{ app.appName }}</h1>
       <h2 class="text-lg">{{ app.appDesc }}</h2>
 

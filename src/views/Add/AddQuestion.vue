@@ -60,7 +60,8 @@
     </a-form>
 
     <!-- 智谱AI生成题目【抽屉】 -->
-    <ZhiPuAiGenerateQuestionDrawer :appId="props.appId" v-model:visible="visible" @submit="ZhiPuAiGenerateQuestion" />
+    {{ AIloading }}==
+    <ZhiPuAiGenerateQuestionDrawer :appId="props.appId" v-model:AIloading="AIloading" v-model:visible="visible" @submit="ZhiPuAiGenerateQuestion" @ZhiPuAiSSEGenerateQuestion="ZhiPuAiSSEGenerateQuestion" />
   </div>
 </template>
 
@@ -135,14 +136,13 @@ const deleteQuestionOption = (e, question: API.QuestionContentDTO, index: number
 
 // AI生成题目
 const visible = ref(false)
-
 const addAiQuestion = () => {
   visible.value = true
 }
 const loading = ref(false)
 
 // 智谱AI生成题目成功后后执行
-
+const AIloading = ref(false)
 const ZhiPuAiGenerateQuestion = async payload => {
   loading.value = true
   let res = await aiGenerateQuestionUsingPost(payload)
@@ -152,6 +152,35 @@ const ZhiPuAiGenerateQuestion = async payload => {
   } else {
     message.error('生成题目失败，' + res.data.message)
   }
+  AIloading.value = false
+  loading.value = false
+}
+
+// 智谱AI生成题目【SSE提交，流式生成】
+const ZhiPuAiSSEGenerateQuestion = async form => {
+  loading.value = true
+  visible.value = false
+  // 创建 SSE 请求
+  const eventSource = new EventSource(`http://localhost:8101/api/question/ai_generate/sse?appId=${props.appId}&optionNumber=${form.optionNumber}&questionNumber=${form.questionNumber}`)
+  // 接收消息
+  eventSource.onmessage = function (event) {
+    console.log(event.data)
+    questionContent.value = [...questionContent.value, JSON.parse(event.data)]
+  }
+  // 报错后者连接关闭时触发
+  eventSource.onerror = function (event) {
+    if (event.eventPhase === EventSource.CLOSED) {
+      console.error('关闭连接')
+      eventSource.close()
+    } else {
+      eventSource.close()
+    }
+  }
+  // 连接建立时触发
+  eventSource.onopen = function () {
+    console.log('建立连接')
+  }
+
   loading.value = false
 }
 

@@ -12,7 +12,8 @@
         <a-input-number min="1" max="10" v-model="form.optionNumber" placeholder="请输入选项数量" />
       </a-form-item>
       <a-form-item>
-        <a-button html-type="submit" type="primary" class="w-[100px]">提交</a-button>
+        <a-button html-type="submit" type="primary" :loading="props.AIloading" class="w-[100px]">一键生成</a-button>
+        <a-button type="primary" status="success" class="!ml-4" @click="addAiSSEQuestion()">实时生成</a-button>
       </a-form-item>
     </a-form>
   </a-drawer>
@@ -23,6 +24,7 @@ import { ref, withDefaults, defineProps } from 'vue'
 interface Props {
   appId: Number | string
   modelValue: boolean
+  AIloading: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -32,10 +34,14 @@ const props = withDefaults(defineProps<Props>(), {
   modelValue: () => {
     return false
   },
+  AIloading: () => {
+    return false
+  },
 })
 
-const emit = defineEmits(['submit', 'update:loading', 'update:modelValue'])
+const emit = defineEmits(['submit', 'ZhiPuAiSSEGenerateQuestion', 'update:AIloading', 'update:modelValue'])
 
+const AIloading = ref(false)
 const form = ref({
   // 应用id
   appId: props.appId,
@@ -45,8 +51,22 @@ const form = ref({
   optionNumber: 2,
 })
 
+// AI生成题目
 const handleSubmit = async () => {
+  // 关闭弹窗
+  emit('update:modelValue', false)
+  // 开启加载状态
+  emit('update:AIloading', true)
+  // 提交表单数据
   emit('submit', form.value)
+}
+
+// SSE异步生成题目
+const addAiSSEQuestion = async () => {
+  // 关闭弹窗
+  emit('update:modelValue', false)
+  // 提交表单数据
+  emit('ZhiPuAiSSEGenerateQuestion', form.value)
 }
 
 const handleOk = () => {
