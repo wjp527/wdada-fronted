@@ -60,7 +60,6 @@
     </a-form>
 
     <!-- 智谱AI生成题目【抽屉】 -->
-    {{ AIloading }}==
     <ZhiPuAiGenerateQuestionDrawer :appId="props.appId" v-model:AIloading="AIloading" v-model:visible="visible" @submit="ZhiPuAiGenerateQuestion" @ZhiPuAiSSEGenerateQuestion="ZhiPuAiSSEGenerateQuestion" />
   </div>
 </template>

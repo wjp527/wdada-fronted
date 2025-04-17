@@ -10,9 +10,8 @@
       </div>
       <div class="mt-2">
         <a-space>
-          <a-button v-if="current > 1" :disabled="loading" @click="current--">上一题</a-button>
           <a-button v-if="current < questionContent.length" :disabled="!currentAnswer" type="primary" @click="current++" class="!mx-2">下一题</a-button>
-
+          <a-button v-if="current > 1" :disabled="loading" @click="current--">上一题</a-button>
           <a-button v-if="current == questionContent.length" :disabled="!currentAnswer" :loading="loading" type="primary" status="success" @click="handleSubmit">查看结果</a-button>
         </a-space>
       </div>
@@ -28,7 +27,7 @@ import { useRouter } from 'vue-router'
 import { addAppUsingPost, editAppUsingPost, getAppVoByIdUsingGet } from '@/api/appController'
 import { SCORE_STRATEGY_MAP, APP_TYPE_MAP, APP_TYPE_ENUM, SCORE_STRATEGY_ENUM } from '@/constant/app'
 import { addQuestionUsingPost, editQuestionUsingPost, listQuestionVoByPageUsingPost } from '@/api/questionController'
-import { addUserAnswerUsingPost } from '@/api/userAnswerController'
+import { addUserAnswerUsingPost, generateUserAnswerIdUsingGet } from '@/api/userAnswerController'
 interface Props {
   appId: string
 }
@@ -143,6 +142,7 @@ const handleSubmit = async () => {
     resultAnswerList.value = answerList.value
   }
   res = await addUserAnswerUsingPost({
+    id: id.value as number,
     appId: props.appId as any,
     choices: resultAnswerList.value,
   })
@@ -155,4 +155,22 @@ const handleSubmit = async () => {
 
   loading.value = false
 }
+
+// 唯一id
+const id = ref<number>()
+/**
+ * 生成唯一Id
+ */
+const generateId = async () => {
+  let res = await generateUserAnswerIdUsingGet()
+  if (res.data.code === 0) {
+    id.value = res.data.data
+  } else {
+    message.error('获取唯一ID失败，' + res.data.message)
+  }
+}
+// 进入页面，生成唯一Id
+watchEffect(() => {
+  generateId()
+})
 </script>
