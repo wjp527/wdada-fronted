@@ -1,8 +1,9 @@
 import axios from "axios";
 import { Message } from "@arco-design/web-vue";
 
+export const baseURL = 'http://localhost:8101'
 const myAxios = axios.create({
-  baseURL: "http://localhost:8101",
+  baseURL,
   timeout: 60000,
   // 携带凭证信息
   withCredentials: true,

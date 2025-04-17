@@ -1,4 +1,12 @@
 declare namespace API {
+  type aiGenerateQuestionSSETestUsingGETParams = {
+    appId?: number;
+    optionNumber?: number;
+    questionNumber?: number;
+    /** isAdmin */
+    isAdmin?: boolean;
+  };
+
   type aiGenerateQuestionSSEUsingGETParams = {
     appId?: number;
     optionNumber?: number;

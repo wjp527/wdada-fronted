@@ -73,6 +73,7 @@ import { addAppUsingPost, editAppUsingPost, getAppVoByIdUsingGet } from '@/api/a
 import { SCORE_STRATEGY_MAP, APP_TYPE_MAP } from '@/constant/app'
 import { addQuestionUsingPost, aiGenerateQuestionUsingPost, editQuestionUsingPost, listQuestionVoByPageUsingPost } from '@/api/questionController'
 import ZhiPuAiGenerateQuestionDrawer from './components/ZhiPuAiGenerateQuestionDrawer.vue'
+import { baseURL } from '@/request'
 interface Props {
   appId: string
 }
@@ -160,7 +161,10 @@ const ZhiPuAiSSEGenerateQuestion = async form => {
   loading.value = true
   visible.value = false
   // 创建 SSE 请求
-  const eventSource = new EventSource(`http://localhost:8101/api/question/ai_generate/sse?appId=${props.appId}&optionNumber=${form.optionNumber}&questionNumber=${form.questionNumber}`)
+  const eventSource = new EventSource(`${baseURL}/api/question/ai_generate/sse?appId=${props.appId}&optionNumber=${form.optionNumber}&questionNumber=${form.questionNumber}`, {
+    // 一定要带上cookie，不然智谱AI无法识别用户身份
+    withCredentials: true,
+  })
   // 接收消息
   eventSource.onmessage = function (event) {
     console.log(event.data)
