@@ -1,5 +1,6 @@
 <template>
   <div class="home-container">
+    <ShareModal v-model="visible" />
     <div class="flex justify-center">
       <a-input-search :style="{ width: '320px' }" v-model="appName" placeholder="快速发现答题应用" search-button allow-clear @search="loadData" />
     </div>
@@ -19,6 +20,7 @@ import { ref, reactive, watchEffect, computed } from 'vue'
 import Card from '@/components/Card/index.vue'
 import { listAppVoByPageUsingPost } from '@/api/appController'
 import { REVIEW_STATUS_ENUM } from '@/constant/app'
+import ShareModal from '@/components/Modal/ShareModal.vue'
 
 const searchParams = ref({
   current: 1,

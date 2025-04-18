@@ -160,6 +160,14 @@ export const routes: Array<RouteRecordRaw> = [
     }
   },
   {
+    path: "/app_statistic",
+    name: "应用统计",
+    component: () => import('@/views/Admin/AppStatistic.vue'),
+    meta: {
+      access: ACCESS_ENUM.ADMIN,
+    },
+  },
+  {
     path: '/noAuth',
     name: '无权限',
     component: () => import('@/views/Test/NoAuth.vue'),

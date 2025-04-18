@@ -73,7 +73,7 @@ import { addAppUsingPost, editAppUsingPost, getAppVoByIdUsingGet } from '@/api/a
 import { SCORE_STRATEGY_MAP, APP_TYPE_MAP } from '@/constant/app'
 import { addQuestionUsingPost, aiGenerateQuestionUsingPost, editQuestionUsingPost, listQuestionVoByPageUsingPost } from '@/api/questionController'
 import ZhiPuAiGenerateQuestionDrawer from './components/ZhiPuAiGenerateQuestionDrawer.vue'
-import { baseURL } from '@/request'
+import { baseURL, onlineUrl } from '@/request'
 interface Props {
   appId: string
 }

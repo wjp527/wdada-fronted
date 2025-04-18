@@ -2,6 +2,7 @@ import axios from "axios";
 import { Message } from "@arco-design/web-vue";
 
 export const baseURL = 'http://localhost:8101'
+export const onlineUrl = "http://localhost:8101"
 const myAxios = axios.create({
   baseURL,
   timeout: 60000,

@@ -33,6 +33,7 @@
         </a-col>
       </a-row>
     </a-card>
+    <ShareModal ref="shareModalRef" :link="link" :title="title" />
   </div>
 </template>
 
@@ -43,6 +44,7 @@ import { computed, onMounted, ref } from 'vue'
 import dayjs from 'dayjs'
 import { useRouter } from 'vue-router'
 import { useLoginUserStore } from '@/store/user'
+import ShareModal from '@/components/Modal/ShareModal.vue'
 const router = useRouter()
 
 interface Props {
@@ -71,12 +73,28 @@ const handleStartAnswer = () => {
   router.push(`/answer/do/${props.id}`)
 }
 // 分享应用
-const handleShareApp = () => {}
+const shareModalRef = ref('')
+const link = ref('')
+const title = ref('')
+link.value = `${window.location.protocol}://${window.location.host}/app/detail/${props.id}`
+title.value = '应用分享'
+const handleShareApp = (e: any) => {
+  if (shareModalRef.value) {
+    // 阻止冒泡
+    e.stopPropagation()
+    shareModalRef.value.onOpen()
+  }
+}
 // 设置题目
 const handleSetQuestion = () => {
   router.push(`/add/question/${props.id}`)
 }
 // 设置评分
+/**
+ * 设置评分结果
+ *
+ * 该函数会将页面路由跳转到添加评分结果的页面，并传递当前组件的props中的id作为参数。
+ */
 const handleSetScoring = () => {
   router.push(`/add/scoring_result/${props.id}`)
 }

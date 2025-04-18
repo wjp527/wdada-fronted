@@ -25,14 +25,16 @@
       </template>
     </a-card-meta>
   </a-card>
+  <ShareModal ref="shareModalRef" :link="link" :title="title" />
 </template>
 
 <script lang="ts" setup>
 import { IconThumbUp, IconShareInternal, IconMore } from '@arco-design/web-vue/es/icon'
 
 import API from '@/api'
-import { defineProps, withDefaults } from 'vue'
+import { ref, defineProps, withDefaults } from 'vue'
 import { useRouter } from 'vue-router'
+import ShareModal from '@/components/Modal/ShareModal.vue'
 
 interface Props {
   app: API.AppVO
@@ -50,10 +52,17 @@ const doCardClick = () => {
 }
 
 // 分享
+const shareModalRef = ref('')
+const link = ref('')
+const title = ref('')
+link.value = `${window.location.protocol}//:${window.location.host}/app/detail/${props.app.id}`
+title.value = '应用分享'
 const handleShare = (e: any) => {
-  console.log('share')
-  // 阻止冒泡
-  e.stopPropagation()
+  if (shareModalRef.value) {
+    // 阻止冒泡
+    e.stopPropagation()
+    shareModalRef.value.onOpen()
+  }
 }
 </script>
 <style scoped>
