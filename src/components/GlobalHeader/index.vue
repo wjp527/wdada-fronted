@@ -6,7 +6,7 @@
           <a-menu-item key="0" :style="{ padding: 0, marginRight: '38px' }" @click="handleHome">
             <div class="titlebar flex items-center justify-center">
               <img src="@/assets/logo.png" alt="" style="width: 48px; height: 48px" />
-              <div class="text-sm text-black-300 dark:text-black-400">wAI答题</div>
+              <div class="text-xl text-black-300 dark:text-black-400 ml-1">π智链</div>
             </div>
           </a-menu-item>
           <a-menu-item v-for="item in visibleRoutes" :key="item.path" @click="handleTo(item)">{{ item.name }}</a-menu-item>
@@ -19,7 +19,7 @@
           <a-dropdown v-else :popup-max-height="false">
             <a-button>{{ loginUser.userName || defineName }}<icon-down /></a-button>
             <template #content>
-              <a-doption>个人中心</a-doption>
+              <a-doption @click="handleUserCenter">个人中心</a-doption>
               <a-doption @click="handleLogout">退出登录</a-doption>
             </template>
           </a-dropdown>
@@ -83,6 +83,11 @@ const handleTo = (item: any) => {
 // 登录
 const handleLogin = () => {
   router.replace('/user/login')
+}
+
+// 个人中心
+const handleUserCenter = () => {
+  router.push('/center')
 }
 // 退出登录
 const handleLogout = () => {

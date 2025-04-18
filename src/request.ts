@@ -2,11 +2,11 @@ import axios from "axios";
 import { Message } from "@arco-design/web-vue";
 
 export const baseURL = 'http://localhost:8101'
-export const onlineUrl = "http://localhost:8101"
+export const onlineUrl = "http://wdada.wcoder.online:81"
 const myAxios = axios.create({
-  baseURL,
+  baseURL: onlineUrl,
   timeout: 60000,
-  // 携带凭证信息
+  // 携带凭证信息 
   withCredentials: true,
 });
 

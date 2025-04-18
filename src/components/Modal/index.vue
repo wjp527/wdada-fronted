@@ -14,7 +14,7 @@
           <a-input v-model="form.userProfile" placeholder="请输入用户简介" />
         </a-form-item>
         <a-form-item field="userAvatar" label="用户头像">
-          <Picture-uploader biz="user_avatar" v-model="form.userAvatar"></Picture-uploader>
+          <Picture-uploader biz="user_avatar" v-model="form.userAvatar" :value="form.userAvatar"></Picture-uploader>
         </a-form-item>
         <a-form-item field="userRole" label="用户权限">
           <a-select :style="{ width: '320px' }" v-model="form.userRole" placeholder="请选择用户权限" allow-clear>

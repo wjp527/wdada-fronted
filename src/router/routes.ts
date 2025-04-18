@@ -110,7 +110,8 @@ export const routes: Array<RouteRecordRaw> = [
         path: '/user/register',
         name: '用户注册',
         component: () => import('@/views/User/register.vue'),
-      }
+      },
+
     ]
   },
 
@@ -166,6 +167,19 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       access: ACCESS_ENUM.ADMIN,
     },
+  },
+  {
+    path: "/center",
+    name: '个人中心',
+    component: () => import('@/views/User/userCenter.vue'),
+    meta: {
+      hideInMenu: true
+    }
+  },
+  {
+    path: '/website',
+    name: '网站介绍',
+    component: () => import('@/views/website/websiteIntroduction.vue'),
   },
   {
     path: '/noAuth',

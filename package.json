@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite --open",
     "build": "vue-tsc -b && vite build",
+    "build-only": "vite build --mode production",
     "openapi": "cross-env NODE_OPTIONS=\"--loader ts-node/esm\" node openapi.config.ts",
     "preview": "vite preview"
   },
@@ -35,6 +36,8 @@
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/tsconfig": "^0.7.0",
     "cross-env": "^7.0.3",
+    "dayjs": "^1.11.13",
+    "terser": "^5.39.0",
     "ts-node": "^10.9.2",
     "typescript": "~5.7.2",
     "vite": "^6.2.0",

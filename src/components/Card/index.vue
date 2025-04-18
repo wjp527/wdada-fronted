@@ -55,7 +55,7 @@ const doCardClick = () => {
 const shareModalRef = ref('')
 const link = ref('')
 const title = ref('')
-link.value = `${window.location.protocol}//:${window.location.host}/app/detail/${props.app.id}`
+link.value = `${window.location.protocol}//${window.location.host}/app/detail/${props.app.id}`
 title.value = '应用分享'
 const handleShare = (e: any) => {
   if (shareModalRef.value) {
@@ -79,7 +79,7 @@ const handleShare = (e: any) => {
   background-color: rgb(var(--gray-2));
 }
 
-::v-deep .arco-list-content {
+.arco-list-content {
   margin: 0 !important;
 }
 </style>

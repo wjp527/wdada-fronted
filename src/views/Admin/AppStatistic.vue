@@ -133,7 +133,7 @@ onMounted(() => {
 </script>
 
 <style lang="less" scoped>
-::v-deep .arco-layout-content {
+.arco-layout-content {
   margin: 0 !important;
   padding: 0 !important;
 }

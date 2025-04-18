@@ -18,11 +18,15 @@
             <p class="text-gray-500 mt-4">创建时间: {{ dayjs(appDetailInfo?.createTime).format('YYYY-MM-DD HH:mm:ss') }}</p>
           </div>
           <div class="mt-10 mb-10">
-            <a-button type="primary" @click="handleStartAnswer" class="!mr-4">开始答题</a-button>
-            <a-button @click="handleShareApp" class="!mr-4">分享应用</a-button>
-            <a-button @click="handleSetQuestion" class="!mr-4" v-if="isMe">设置题目</a-button>
-            <a-button @click="handleSetScoring" class="!mr-4" v-if="isMe">设置评分</a-button>
-            <a-button @click="handleEditApp" class="!mr-4" v-if="isMe">修改应用</a-button>
+            <a-button type="primary" v-if="appDetailInfo?.reviewStatus === REVIEW_STATUS_ENUM.REVIEWING">审核中</a-button>
+            <a-button type="primary" status="danger" v-else-if="appDetailInfo?.reviewStatus === REVIEW_STATUS_ENUM.REJECT">已拒绝</a-button>
+            <div v-else>
+              <a-button type="primary" @click="handleStartAnswer" class="!mr-4">开始答题</a-button>
+              <a-button @click="handleShareApp" class="!mr-4">分享应用</a-button>
+              <a-button @click="handleSetQuestion" class="!mr-4" v-if="isMe">设置题目</a-button>
+              <a-button @click="handleSetScoring" class="!mr-4" v-if="isMe">设置评分</a-button>
+              <a-button @click="handleEditApp" class="!mr-4" v-if="isMe">修改应用</a-button>
+            </div>
           </div>
         </a-col>
         <a-col flex="300px">
@@ -39,7 +43,7 @@
 
 <script lang="ts" setup>
 import { getAppVoByIdUsingGet } from '@/api/appController'
-import { APP_TYPE_MAP, SCORE_STRATEGY_MAP } from '@/constant/app'
+import { APP_TYPE_MAP, REVIEW_STATUS_ENUM, SCORE_STRATEGY_MAP } from '@/constant/app'
 import { computed, onMounted, ref } from 'vue'
 import dayjs from 'dayjs'
 import { useRouter } from 'vue-router'

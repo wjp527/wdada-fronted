@@ -1,6 +1,14 @@
 <template>
   <div id="addAppPage" class="flex flex-col items-center justify-center">
     <a-card :style="{ width: '860px' }">
+      <div class="flex items-center justify-between">
+        <a-progress :animation="true" :percent="percent" :steps="questionContent.length" status="primary" :show-text="false" style="display: " class="flex" />
+        <div class="flex-1/10 ml-6">
+          (
+          {{ current }}
+          /{{ questionContent.length }})
+        </div>
+      </div>
       <h1 class="text-2xl font-bold">{{ app.appName }}</h1>
       <h2 class="text-lg">{{ app.appDesc }}</h2>
 
@@ -10,8 +18,8 @@
       </div>
       <div class="mt-2">
         <a-space>
-          <a-button v-if="current < questionContent.length" :disabled="!currentAnswer" type="primary" @click="current++" class="!mx-2">下一题</a-button>
-          <a-button v-if="current > 1" :disabled="loading" @click="current--">上一题</a-button>
+          <a-button v-if="current < questionContent.length" :disabled="!currentAnswer" type="primary" @click="nextProblem" class="!mx-2">下一题</a-button>
+          <a-button v-if="current > 1" :disabled="loading" @click="blackProblem">上一题</a-button>
           <a-button v-if="current == questionContent.length" :disabled="!currentAnswer" :loading="loading" type="primary" status="success" @click="handleSubmit">查看结果</a-button>
         </a-space>
       </div>
@@ -20,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineProps, reactive, ref, watchEffect, withDefaults } from 'vue'
+import { computed, defineProps, nextTick, reactive, ref, watchEffect, withDefaults } from 'vue'
 import API from '@/api'
 import message from '@arco-design/web-vue/es/message'
 import { useRouter } from 'vue-router'
@@ -69,6 +77,7 @@ const answerValueList = ref<string[]>([])
 /**
  * 加载数据
  */
+let percent = ref(0)
 const loadData = async () => {
   if (!props.appId) {
     return
@@ -92,6 +101,9 @@ const loadData = async () => {
   })
   if (res.data.code === 0 && res.data.data.records) {
     questionContent.value = res.data.data.records[0]?.questionContent
+
+    percent.value = 1 / questionContent.value.length
+    console.log(percent.value, '==')
   } else {
     message.error('获取数据失败，' + res.data.message)
   }
@@ -169,8 +181,39 @@ const generateId = async () => {
     message.error('获取唯一ID失败，' + res.data.message)
   }
 }
+
+// 进度条百分比
+
+// 下一题
+const nextProblem = () => {
+  current.value++
+  percent.value += 1 / questionContent.value.length
+}
+// 上一题
+const blackProblem = () => {
+  current.value--
+  percent.value -= 1 / questionContent.value.length
+}
 // 进入页面，生成唯一Id
 watchEffect(() => {
   generateId()
 })
+
+const formatWithPrecision = (value, precision) => {
+  return value.toFixed(precision) + '%'
+}
 </script>
+
+<style lang="less" scoped>
+:deep.arco-progress-steps-text::after {
+  content: attr(data-percent);
+  /* 通过max-width和overflow隐藏超长内容 */
+  max-width: 80px !important;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  /* 精确控制文本显示长度 */
+  font-family: monospace; /* 等宽字体保证字符对齐 */
+}
+</style>

@@ -1,6 +1,5 @@
 <template>
   <div class="home-container">
-    <ShareModal v-model="visible" />
     <div class="flex justify-center">
       <a-input-search :style="{ width: '320px' }" v-model="appName" placeholder="快速发现答题应用" search-button allow-clear @search="loadData" />
     </div>
@@ -90,7 +89,7 @@ const onPageSizeChange = (size: number) => {
   margin: 0 4px;
 }
 
-::v-deep .arco-btn-shape-square {
+.arco-btn-shape-square {
   width: 46px !important;
   height: 36px !important;
 }

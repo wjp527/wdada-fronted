@@ -161,7 +161,7 @@ const ZhiPuAiSSEGenerateQuestion = async form => {
   loading.value = true
   visible.value = false
   // 创建 SSE 请求
-  const eventSource = new EventSource(`${baseURL}/api/question/ai_generate/sse?appId=${props.appId}&optionNumber=${form.optionNumber}&questionNumber=${form.questionNumber}`, {
+  const eventSource = new EventSource(`${onlineUrl}/api/question/ai_generate/sse?appId=${props.appId}&optionNumber=${form.optionNumber}&questionNumber=${form.questionNumber}`, {
     // 一定要带上cookie，不然智谱AI无法识别用户身份
     withCredentials: true,
   })
@@ -265,7 +265,7 @@ const handleSubmit = async () => {
 }
 </script>
 <style lang="less" scoped>
-::v-deep.arco-input-wrapper {
+.arco-input-wrapper {
   width: 400px !important;
 }
 </style>

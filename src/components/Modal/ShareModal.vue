@@ -2,7 +2,7 @@
   <div v-if="visible">
     <a-modal :visible="visible" :footer="false" @cancel="visible = false">
       <template #title>{{ title }}</template>
-      <h4>赋值分享链接</h4>
+      <h4>复制分享链接</h4>
       <a-typography-paragraph copyable>
         {{ link }}
       </a-typography-paragraph>

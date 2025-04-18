@@ -38,7 +38,7 @@
     background: linear-gradient(to right, #fefefe, #fff);
     margin: 0 auto;
     margin-bottom: 28px;
-    padding: 20px; 
+    padding: 20px;
     box-sizing: border-box;
   }
 
@@ -49,7 +49,7 @@
   }
 }
 
-::v-deep .arco-list-content {
+.arco-list-content {
   margin: 0 !important;
 }
 </style>

@@ -4,7 +4,7 @@
       <a-layout-header class="header"
         ><div class="flex flex-col items-center justify-center">
           <img class="w-[68px] h-[68px]" src="@/assets/logo.png" alt="" />
-          <div class="my-4">wAI答题应用平台</div>
+          <div class="my-4">π智链</div>
         </div>
       </a-layout-header>
       <a-layout-content class="content">
